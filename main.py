@@ -7,6 +7,7 @@ class Board:
         self.board = [[0] * layout[0] for _ in range(layout[1])] # what is with the shallow copy and deep copy wtf [[0]*4]*4 will not work beacuse it will just use the same lis 4 time rip
         self.empty_tiles = self.board
         self.last_move = "" # left right up down: this will be used to know which direction to merge
+        self.score = 0
 
     def print_board(self):
         for row in self.board:
@@ -29,15 +30,17 @@ class Board:
     
     def insert_tile(self):
         self.get_empty_tiles()
-        tile_choice = random.choice(self.empty_tiles)
-        print(tile_choice)
-        x = tile_choice[0]
-        y = tile_choice[1]
+        if self.empty_tiles:
+            tile_choice = random.choice(self.empty_tiles)
         
-        print(x,y)
-        prob_of_two = 8
-        prob_of_four = 2
-        self.board[x][y] = random.choice([2]*prob_of_two + [4]*prob_of_four)
+            print(tile_choice)
+            x = tile_choice[0]
+            y = tile_choice[1]
+            
+            print(x,y)
+            prob_of_two = 8
+            prob_of_four = 2
+            self.board[x][y] = random.choice([2]*prob_of_two + [4]*prob_of_four)
         
 
     def compress(self, direction):
@@ -93,6 +96,15 @@ class Board:
         #     print(row)
         self.board = transposed_board
 
+    def calc_score(self):
+        score = 0
+        
+        for row in self.board:
+            for col in row:
+                score += int(col)
+        self.score = score
+    
+    
     def merge(self):
         if self.last_move in ["left", "right"]:
             row_index = 0
@@ -132,7 +144,7 @@ class Board:
 board = Board()
 print("2048 Type 'up', 'down', 'left', 'right' to pick the directiion you want to go")
 
-for i in range(100):
+for i in range(1000):
     # dir = input("direction: ")
     if i % 4 == 0:
         dir = "up"
@@ -151,4 +163,6 @@ for i in range(100):
     print(dir, "completed")
     print(board.last_move)
     board.print_board()
+    board.calc_score()
+    print("Score: ", board.score)
     
